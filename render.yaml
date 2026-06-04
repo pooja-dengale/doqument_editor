@@ -3,15 +3,15 @@ services:
   - type: web
     name: ajaia-docs-api
     runtime: python
-    buildCommand: "./build.sh"
+    buildCommand: "chmod +x build.sh && ./build.sh"
     startCommand: "gunicorn ajaia_docs.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: ajaia_docs.settings_prod
       - key: SECRET_KEY
-        generateValue: true          # Render auto-generates a secure value
+        generateValue: true
       - key: ALLOWED_HOSTS
-        value: ajaia-docs-api.onrender.com
+        value: ".onrender.com,localhost"
       - key: FRONTEND_URL
         value: https://doqument-editor.vercel.app
       - key: DATABASE_URL
@@ -20,7 +20,7 @@ services:
           property: connectionString
     healthCheckPath: /api/users/
 
-  # ── PostgreSQL database ──────────────────────────────────────────────────
+# ── PostgreSQL database ────────────────────────────────────────────────────
 databases:
   - name: ajaia-docs-db
     databaseName: ajaia_docs
