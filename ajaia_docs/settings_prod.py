@@ -14,18 +14,17 @@ DEBUG = False
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '.onrender.com,localhost').split(',')]
 
 # ── Database — use DATABASE_URL if set (Postgres), otherwise SQLite ───────────
-import os as _os
-_db_url = _os.environ.get('DATABASE_URL', '')
-if _db_url:
+_db_url = os.environ.get('DATABASE_URL', '').strip()
+if _db_url and _db_url.startswith(('postgres', 'postgresql')):
     DATABASES = {
-        'default': dj_database_url.config(
-            default=_db_url,
+        'default': dj_database_url.parse(
+            _db_url,
             conn_max_age=600,
             conn_health_checks=True,
         )
     }
 else:
-    # Fallback to SQLite when no Postgres DB is attached (free Render plan)
+    # No Postgres attached — use SQLite (data resets on redeploy on free tier)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
