@@ -232,6 +232,31 @@ def doc_share(request, doc_id):
 
 @login_required
 @require_http_methods(['POST'])
+def doc_rename(request, doc_id):
+    """Rename a document title — owner or edit-share users only."""
+    doc = get_object_or_404(
+        Document.objects.filter(
+            Q(owner=request.user) | Q(shares__shared_with=request.user)
+        ).distinct(),
+        pk=doc_id,
+    )
+
+    # Permission check
+    if doc.owner != request.user:
+        share = doc.shares.filter(shared_with=request.user).first()
+        if not share or share.permission != 'edit':
+            return redirect('doc-edit', doc_id=doc_id)
+
+    new_title = request.POST.get('title', '').strip()
+    if new_title:
+        doc.title = new_title
+        doc.save(update_fields=['title', 'updated_at'])
+
+    return redirect('doc-edit', doc_id=doc_id)
+
+
+@login_required
+@require_http_methods(['POST'])
 def doc_revoke(request, doc_id, username):
     doc = get_object_or_404(Document, pk=doc_id, owner=request.user)
     DocumentShare.objects.filter(

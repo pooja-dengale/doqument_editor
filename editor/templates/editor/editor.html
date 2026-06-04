@@ -21,10 +21,36 @@
     {% if my_docs %}
       <ul class="doc-list">
         {% for doc in my_docs %}
-          <li class="doc-item {% if active_doc.id == doc.id %}active{% endif %}">
-            <a href="{% url 'doc-edit' doc.id %}" title="{{ doc.title }}">
-              📄 {{ doc.title|truncatechars:26 }}
-            </a>
+          <li class="doc-item {% if active_doc.id == doc.id %}active{% endif %}"
+              id="doc-item-{{ doc.id }}">
+
+            {# Normal view row #}
+            <div class="doc-row" id="doc-row-{{ doc.id }}">
+              <a href="{% url 'doc-edit' doc.id %}" title="{{ doc.title }}" class="doc-link">
+                📄 <span class="doc-label">{{ doc.title|truncatechars:22 }}</span>
+              </a>
+              <button class="btn-rename-icon"
+                      onclick="startRename({{ doc.id }}, '{{ doc.title|escapejs }}')"
+                      title="Rename document"
+                      aria-label="Rename {{ doc.title }}">✎</button>
+            </div>
+
+            {# Rename inline form (hidden by default) #}
+            <form class="rename-form" id="rename-form-{{ doc.id }}"
+                  method="post" action="{% url 'doc-rename' doc.id %}"
+                  style="display:none">
+              {% csrf_token %}
+              <input type="text" name="title" class="rename-input"
+                     id="rename-input-{{ doc.id }}"
+                     placeholder="New title…"
+                     autocomplete="off">
+              <div class="rename-actions">
+                <button type="submit" class="btn-rename-ok" title="Save">✓</button>
+                <button type="button" class="btn-rename-cancel"
+                        onclick="cancelRename({{ doc.id }})" title="Cancel">✕</button>
+              </div>
+            </form>
+
           </li>
         {% endfor %}
       </ul>
@@ -259,6 +285,32 @@
   document.getElementById('share-modal')?.addEventListener('click', closeShareModal);
 
   {% if open_share_modal %}openShareModal();{% endif %}
+
+  // ── Inline rename ────────────────────────────────────────────────────────
+  function startRename(docId, currentTitle) {
+    // Hide the normal row, show the form
+    document.getElementById('doc-row-' + docId).style.display = 'none';
+    const form = document.getElementById('rename-form-' + docId);
+    form.style.display = 'flex';
+    const input = document.getElementById('rename-input-' + docId);
+    input.value = currentTitle;
+    input.focus();
+    input.select();
+  }
+
+  function cancelRename(docId) {
+    document.getElementById('doc-row-' + docId).style.display = 'flex';
+    document.getElementById('rename-form-' + docId).style.display = 'none';
+  }
+
+  // Allow Enter to submit, Escape to cancel
+  document.querySelectorAll('.rename-input').forEach(input => {
+    const docId = input.id.replace('rename-input-', '');
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter')  { e.preventDefault(); input.closest('form').submit(); }
+      if (e.key === 'Escape') { cancelRename(docId); }
+    });
+  });
 </script>
 {% endif %}
 {% endblock %}

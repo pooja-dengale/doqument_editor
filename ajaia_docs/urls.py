@@ -4,7 +4,8 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 from editor.dtl_views import (
     login_view, signup_view, logout_view,
-    editor_home, doc_new, doc_edit, doc_save, doc_import, doc_share, doc_revoke,
+    editor_home, doc_new, doc_edit, doc_save, doc_import,
+    doc_share, doc_revoke, doc_rename,
 )
 
 urlpatterns = [
@@ -25,6 +26,7 @@ urlpatterns = [
     path('import/',       doc_import,  name='doc-import'),
     path('doc/<int:doc_id>/',                       doc_edit,   name='doc-edit'),
     path('doc/<int:doc_id>/save/',                  doc_save,   name='doc-save'),
+    path('doc/<int:doc_id>/rename/',                doc_rename, name='doc-rename'),
     path('doc/<int:doc_id>/share/',                 doc_share,  name='doc-share'),
     path('doc/<int:doc_id>/revoke/<str:username>/', doc_revoke, name='doc-revoke'),
 ]

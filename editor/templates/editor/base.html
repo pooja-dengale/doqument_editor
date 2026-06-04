@@ -252,7 +252,43 @@
       font-size: 11px; cursor: pointer;
     }
 
-    /* ── Quill dark theme ────────────────────────────────────────────────── */
+    /* ── Rename inline ───────────────────────────────────────────────────── */
+    .doc-row { display:flex; align-items:center; width:100%; }
+    .doc-link { flex:1; display:flex; align-items:center; gap:8px; padding:7px 4px 7px 14px;
+                text-decoration:none; color:var(--muted); font-size:13px;
+                border-left:3px solid transparent; min-width:0; }
+    .doc-link:hover { background:var(--surface2); }
+    .doc-item.active .doc-link { background:#2e2e4e; border-left-color:var(--accent);
+                                  color:var(--text); font-weight:600; }
+    .doc-label { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    .btn-rename-icon {
+      background:transparent; border:none; color:var(--muted); cursor:pointer;
+      font-size:13px; padding:4px 8px 4px 2px; opacity:0; transition:opacity .15s;
+      flex-shrink:0;
+    }
+    .doc-item:hover .btn-rename-icon { opacity:1; }
+    .btn-rename-icon:hover { color:var(--accent); }
+
+    .rename-form {
+      display:flex; flex-direction:column; gap:5px;
+      padding:6px 10px 8px 14px; background:var(--surface2);
+      border-left:3px solid var(--accent);
+    }
+    .rename-input {
+      background:var(--bg); border:1px solid var(--accent); border-radius:5px;
+      color:var(--text); padding:5px 8px; font-size:13px; outline:none; width:100%;
+    }
+    .rename-actions { display:flex; gap:6px; }
+    .btn-rename-ok {
+      background:var(--accent); color:#fff; border:none; border-radius:4px;
+      padding:3px 10px; font-size:12px; font-weight:700; cursor:pointer; flex:1;
+    }
+    .btn-rename-cancel {
+      background:transparent; border:1px solid var(--border); color:var(--muted);
+      border-radius:4px; padding:3px 10px; font-size:12px; cursor:pointer;
+    }
+    .btn-rename-cancel:hover { color:var(--danger); border-color:var(--danger); }
     .ql-toolbar.ql-snow   { background: var(--surface2); border-color: var(--border) !important; }
     .ql-container.ql-snow { background: var(--bg); border-color: var(--border) !important; flex: 1; }
     .ql-editor { color: var(--text); font-size: 15px; line-height: 1.7; min-height: 300px; padding: 20px 28px; }
