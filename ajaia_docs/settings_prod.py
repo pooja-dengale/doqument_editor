@@ -47,6 +47,4 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 # ── Auth redirects ────────────────────────────────────────────────────────────
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/login/'
+# No login required — user switched via session dropdown
