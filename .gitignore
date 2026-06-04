@@ -9,15 +9,7 @@ db.sqlite3
 venv/
 env/
 .venv/
-
-# Django migrations (keep these — they are part of the project)
-# editor/migrations/
-
-# Node / React
-frontend/node_modules/
-frontend/dist/
-frontend/.env
-frontend/.env.local
+staticfiles/
 
 # OS
 .DS_Store
