@@ -15,10 +15,14 @@ export const USER_TOKENS = {
   charlie: 'eac75e2a6ef2a39ad42db994b4958bd430414880',
 };
 
+// In development: Vite proxies /api → http://localhost:8000 (no CORS issues).
+// In production (Vercel): VITE_API_URL is set to the Render backend URL.
+const BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api';
+
 const api = axios.create({
-  // Uses Vite's dev-server proxy (/api → http://localhost:8000/api)
-  // so no CORS preflight issues in development.
-  baseURL: '/api',
+  baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
 });
 
