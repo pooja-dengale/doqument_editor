@@ -13,13 +13,25 @@ DEBUG = False
 # Accepts comma-separated hosts, e.g. ".onrender.com,localhost"
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '.onrender.com,localhost').split(',')]
 
-# ── Database — Render injects DATABASE_URL automatically ─────────────────────
-DATABASES = {
-    'default': dj_database_url.config(
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
+# ── Database — use DATABASE_URL if set (Postgres), otherwise SQLite ───────────
+import os as _os
+_db_url = _os.environ.get('DATABASE_URL', '')
+if _db_url:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=_db_url,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+else:
+    # Fallback to SQLite when no Postgres DB is attached (free Render plan)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # ── Static files via WhiteNoise ───────────────────────────────────────────────
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
