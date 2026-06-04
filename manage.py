@@ -6,7 +6,12 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ajaia_docs.settings')
+    # Use production settings automatically on Render
+    if os.environ.get('RENDER'):
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ajaia_docs.settings_prod')
+    else:
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ajaia_docs.settings')
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
