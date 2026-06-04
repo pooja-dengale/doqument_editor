@@ -138,8 +138,6 @@ REST_FRAMEWORK = {
     ],
 }
 
-# CORS — allow the Vite dev server
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-]
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'

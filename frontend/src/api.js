@@ -7,11 +7,12 @@
  */
 import axios from 'axios';
 
-// Production tokens from https://ajaia-docs-api-dnt2.onrender.com
+// Fixed tokens — set permanently by the seed_users management command.
+// These never change regardless of redeployment.
 export const USER_TOKENS = {
-  alice:   'e78901db61434dabfd7b4136953200bd12d9a8e8',
-  bob:     'da68fa0d2802641917fb7301f9dadd2997042860',
-  charlie: '92d163cd5d70b67bbf3fc8ba62c9aba6fbfa571c',
+  alice:   'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+  bob:     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+  charlie: 'cccccccccccccccccccccccccccccccccccccccc',
 };
 
 // In development: Vite proxies /api → http://localhost:8000 (no CORS issues).

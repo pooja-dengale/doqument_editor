@@ -1,0 +1,252 @@
+{% extends "editor/base.html" %}
+{% block title %}{{ active_doc.title|default:"AjaiaDoc" }}{% endblock %}
+
+{% block body %}
+<div class="app-body">
+
+  {# ── Sidebar ── #}
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <span class="sidebar-head-title">Docs</span>
+      <div class="sidebar-actions">
+        {# Hidden file input for import #}
+        <input type="file" id="import-input" accept=".txt,.md" style="display:none">
+        <button class="btn-import" onclick="document.getElementById('import-input').click()">↑ Import</button>
+        <a href="{% url 'doc-new' %}" class="btn-new">+ New</a>
+      </div>
+    </div>
+
+    {# My Documents #}
+    <div class="section-label">My Documents</div>
+    {% if my_docs %}
+      <ul class="doc-list">
+        {% for doc in my_docs %}
+          <li class="doc-item {% if active_doc.id == doc.id %}active{% endif %}">
+            <a href="{% url 'doc-edit' doc.id %}">
+              📄 {{ doc.title|truncatechars:28 }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="sidebar-empty">No documents yet.</p>
+    {% endif %}
+
+    {# Shared with Me #}
+    <div class="section-label" style="margin-top:8px">Shared with Me</div>
+    {% if shared_docs %}
+      <ul class="doc-list">
+        {% for doc in shared_docs %}
+          <li class="doc-item {% if active_doc.id == doc.id %}active{% endif %}">
+            <a href="{% url 'doc-edit' doc.id %}">
+              🔗 {{ doc.title|truncatechars:22 }}
+              <span class="perm-badge {{ doc.my_permission }}">{{ doc.my_permission }}</span>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="sidebar-empty">Nothing shared yet.</p>
+    {% endif %}
+  </aside>
+
+  {# ── Editor Pane ── #}
+  <div class="editor-pane">
+    {% if active_doc %}
+
+      <form id="doc-form" method="post" action="{% url 'doc-save' active_doc.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="content" id="content-input">
+
+        <div class="editor-toolbar">
+          <input
+            type="text"
+            name="title"
+            id="title-input"
+            class="title-input"
+            value="{{ active_doc.title }}"
+            placeholder="Document title…"
+            {% if not can_edit %}disabled{% endif %}
+          >
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+            {% if save_status == 'saved' %}
+              <span class="status-saved">✓ Saved</span>
+            {% elif save_status == 'error' %}
+              <span class="status-error">✗ Error saving</span>
+            {% endif %}
+
+            {% if not can_edit %}<span class="badge-view">View only</span>{% endif %}
+
+            {% if is_owner %}
+              <button type="button" class="btn-share" onclick="openShareModal()">🔗 Share</button>
+            {% endif %}
+
+            <button type="submit" class="btn-save" {% if not can_edit %}disabled{% endif %}>Save</button>
+          </div>
+        </div>
+      </form>
+
+      <div class="editor-wrap">
+        <div id="quill-editor"></div>
+      </div>
+
+      <div class="editor-footer">
+        <span>Owner: <strong>{{ active_doc.owner.username }}</strong></span>
+        {% if active_doc.updated_at %}
+          <span>Last saved: {{ active_doc.updated_at|date:"M j, Y H:i" }}</span>
+        {% endif %}
+        {% for share in active_doc.shares.all %}
+          <span style="color:{% if share.permission == 'edit' %}#34d399{% else %}#f59e0b{% endif %}">
+            {{ share.shared_with.username }} ({{ share.permission }})
+          </span>
+        {% endfor %}
+      </div>
+
+    {% else %}
+      <div class="empty-state">
+        <span>📝</span>
+        <p>Select a document or create a new one</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+{# ── Share Modal ── #}
+{% if active_doc and is_owner %}
+<div class="modal-backdrop" id="share-modal">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Share document</div>
+        <div class="modal-subtitle">{{ active_doc.title }}</div>
+      </div>
+      <button class="btn-close" onclick="closeShareModal()">✕</button>
+    </div>
+
+    {# Add new share #}
+    <form method="post" action="{% url 'doc-share' active_doc.id %}">
+      {% csrf_token %}
+      <div class="share-form">
+        <select name="username" required>
+          <option value="">— Select user —</option>
+          {% for u in shareable_users %}
+            <option value="{{ u.username }}">{{ u.username }}</option>
+          {% endfor %}
+        </select>
+        <select name="permission">
+          <option value="view">Can view</option>
+          <option value="edit">Can edit</option>
+        </select>
+        <button type="submit" class="btn-share-add"
+          {% if not shareable_users %}disabled{% endif %}>
+          Share
+        </button>
+      </div>
+      {% if not shareable_users %}
+        <p style="font-size:12px;color:var(--muted);margin-top:8px">All users already have access.</p>
+      {% endif %}
+    </form>
+
+    {# Existing shares #}
+    <div class="share-list">
+      <div class="section-label" style="padding:0 0 8px">People with access</div>
+
+      {# Owner row #}
+      <div class="share-row">
+        <div class="avatar" style="background:#6366f1">{{ active_doc.owner.username|first|upper }}</div>
+        <div class="share-info">
+          <div class="share-name">{{ active_doc.owner.username }} <span style="color:var(--muted);font-size:11px">(you)</span></div>
+          <div class="share-perm">Owner</div>
+        </div>
+      </div>
+
+      {% for share in active_doc.shares.all %}
+      <div class="share-row">
+        <div class="avatar" style="background:{% cycle '#10b981' '#f59e0b' '#ec4899' '#3b82f6' %}">
+          {{ share.shared_with.username|first|upper }}
+        </div>
+        <div class="share-info">
+          <div class="share-name">{{ share.shared_with.username }}</div>
+          <div class="share-perm">Can {{ share.permission }}</div>
+        </div>
+        <form method="post" action="{% url 'doc-revoke' active_doc.id share.shared_with.username %}" style="margin:0">
+          {% csrf_token %}
+          <button type="submit" class="btn-revoke">Revoke</button>
+        </form>
+      </div>
+      {% empty %}
+        <p style="font-size:12px;color:var(--muted);margin-top:8px">Not shared with anyone yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+{% if active_doc %}
+<script>
+  // ── Quill setup ─────────────────────────────────────────────────────────
+  const canEdit = {{ can_edit|yesno:"true,false" }};
+
+  const quill = new Quill('#quill-editor', {
+    theme: 'snow',
+    readOnly: !canEdit,
+    placeholder: 'Start writing…',
+    modules: {
+      toolbar: canEdit ? [
+        [{ header: [1, 2, false] }],
+        ['bold', 'italic', 'underline'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['clean']
+      ] : false
+    }
+  });
+
+  // Load saved content
+  const savedContent = {{ active_doc.content|default:"''"|safe }};
+  if (savedContent) quill.root.innerHTML = savedContent;
+
+  // On form submit, copy Quill HTML into the hidden input
+  document.getElementById('doc-form').addEventListener('submit', function() {
+    document.getElementById('content-input').value = quill.root.innerHTML;
+  });
+
+  // ── File import (FileReader API) ──────────────────────────────────────────
+  document.getElementById('import-input').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      const text = evt.target.result;
+      const title = file.name.replace(/\.(txt|md)$/i, '');
+      // POST to create-from-import endpoint
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '{% url "doc-import" %}';
+      const csrfInput = document.createElement('input');
+      csrfInput.type = 'hidden'; csrfInput.name = 'csrfmiddlewaretoken';
+      csrfInput.value = '{{ csrf_token }}';
+      const titleInput = document.createElement('input');
+      titleInput.type = 'hidden'; titleInput.name = 'title'; titleInput.value = title;
+      const contentInput = document.createElement('input');
+      contentInput.type = 'hidden'; contentInput.name = 'content';
+      contentInput.value = text.split('\n').map(l => `<p>${l || '<br>'}</p>`).join('');
+      form.appendChild(csrfInput); form.appendChild(titleInput); form.appendChild(contentInput);
+      document.body.appendChild(form); form.submit();
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  // ── Share modal ────────────────────────────────────────────────────────
+  function openShareModal()  { document.getElementById('share-modal').classList.add('open'); }
+  function closeShareModal() { document.getElementById('share-modal').classList.remove('open'); }
+  document.getElementById('share-modal')?.addEventListener('click', closeShareModal);
+
+  {% if open_share_modal %}openShareModal();{% endif %}
+</script>
+{% endif %}
+{% endblock %}
