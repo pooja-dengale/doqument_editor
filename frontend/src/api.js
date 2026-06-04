@@ -8,11 +8,9 @@
 import axios from 'axios';
 
 // Production tokens from https://ajaia-docs-api-dnt2.onrender.com
-// Alice and Bob tokens: check Render logs or run `python manage.py seed_users`
-// to regenerate. Charlie's token is confirmed from the latest deploy.
 export const USER_TOKENS = {
-  alice:   '646f7dbdfc3cb48a102d334b0e3a2720da1874ae',
-  bob:     'd0b33cbb7f67e35610285ccf029b5559d81d9782',
+  alice:   '8748fb573c1e0832c623eb9dbaa22b56db462e8e',
+  bob:     '9263b74737dc10a755f0c93cf5e71cfcb78cfb1d',
   charlie: 'f223030198a53da15c5bbdc811d32ba05ca28c8c',
 };
 
