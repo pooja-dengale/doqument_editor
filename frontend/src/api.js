@@ -9,9 +9,9 @@ import axios from 'axios';
 
 // Production tokens from https://ajaia-docs-api-dnt2.onrender.com
 export const USER_TOKENS = {
-  alice:   '8748fb573c1e0832c623eb9dbaa22b56db462e8e',
-  bob:     '9263b74737dc10a755f0c93cf5e71cfcb78cfb1d',
-  charlie: 'f223030198a53da15c5bbdc811d32ba05ca28c8c',
+  alice:   'e78901db61434dabfd7b4136953200bd12d9a8e8',
+  bob:     'da68fa0d2802641917fb7301f9dadd2997042860',
+  charlie: '92d163cd5d70b67bbf3fc8ba62c9aba6fbfa571c',
 };
 
 // In development: Vite proxies /api → http://localhost:8000 (no CORS issues).
