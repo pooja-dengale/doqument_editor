@@ -11,7 +11,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = False
 
 # Accepts comma-separated hosts, e.g. ".onrender.com,localhost"
-ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '.onrender.com').split(',')]
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '.onrender.com,localhost').split(',')]
 
 # ── Database — Render injects DATABASE_URL automatically ─────────────────────
 DATABASES = {
