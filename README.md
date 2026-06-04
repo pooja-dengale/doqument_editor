@@ -2,7 +2,14 @@
 
 A full-stack document editor with real-time rich-text editing, file import, and per-user document sharing.
 
-## Tech Stack
+## Live Demo
+
+| | URL |
+|---|---|
+| **Frontend** | https://ajaia-docs-bay.vercel.app |
+| **Backend API** | https://ajaia-docs-api-dnt2.onrender.com/api/ |
+
+
 
 | Layer | Technology |
 |---|---|

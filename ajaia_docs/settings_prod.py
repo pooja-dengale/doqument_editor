@@ -38,10 +38,12 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # ── CORS — allow the Vercel frontend ─────────────────────────────────────────
-# Set FRONTEND_URL in Render dashboard to your Vercel URL
 CORS_ALLOWED_ORIGINS = [
     u.strip()
-    for u in os.environ.get('FRONTEND_URL', 'http://localhost:3000').split(',')
+    for u in os.environ.get(
+        'FRONTEND_URL',
+        'https://ajaia-docs-bay.vercel.app,http://localhost:3000'
+    ).split(',')
 ]
 
 # ── HTTPS / security headers ──────────────────────────────────────────────────
