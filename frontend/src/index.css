@@ -1,0 +1,73 @@
+/* Reset & base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #1a1a2e;
+  color: #e2e8f0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Quill editor dark-theme overrides */
+.ql-toolbar.ql-snow {
+  background: #1e1e3a;
+  border-color: #2e2e4e !important;
+}
+
+.ql-container.ql-snow {
+  background: #1a1a2e;
+  border-color: #2e2e4e !important;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.ql-editor {
+  color: #e2e8f0;
+  font-size: 15px;
+  line-height: 1.7;
+  min-height: 100%;
+  padding: 24px 32px;
+}
+
+.ql-editor.ql-blank::before {
+  color: #475569;
+  font-style: normal;
+}
+
+/* Quill toolbar icon colours */
+.ql-toolbar .ql-stroke {
+  stroke: #94a3b8 !important;
+}
+
+.ql-toolbar .ql-fill {
+  fill: #94a3b8 !important;
+}
+
+.ql-toolbar .ql-picker-label {
+  color: #94a3b8 !important;
+}
+
+.ql-toolbar button:hover .ql-stroke,
+.ql-toolbar button.ql-active .ql-stroke {
+  stroke: #a5b4fc !important;
+}
+
+.ql-toolbar button:hover .ql-fill,
+.ql-toolbar button.ql-active .ql-fill {
+  fill: #a5b4fc !important;
+}
+
+/* React-Quill wrapper needs to fill height */
+.ql-quill-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

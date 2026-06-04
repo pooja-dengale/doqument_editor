@@ -1,0 +1,29 @@
+# Python / Django
+__pycache__/
+*.py[cod]
+*.pyo
+db.sqlite3
+*.sqlite3
+.env
+*.env
+venv/
+env/
+.venv/
+
+# Django migrations (keep these — they are part of the project)
+# editor/migrations/
+
+# Node / React
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
