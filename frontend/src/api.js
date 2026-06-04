@@ -7,12 +7,13 @@
  */
 import axios from 'axios';
 
-// Tokens for the three seeded users. In a real app these would come
-// from a login flow; here we hard-code them so the mock-auth switcher works.
+// Production tokens from https://ajaia-docs-api-dnt2.onrender.com
+// Alice and Bob tokens: check Render logs or run `python manage.py seed_users`
+// to regenerate. Charlie's token is confirmed from the latest deploy.
 export const USER_TOKENS = {
   alice:   '646f7dbdfc3cb48a102d334b0e3a2720da1874ae',
   bob:     'd0b33cbb7f67e35610285ccf029b5559d81d9782',
-  charlie: 'eac75e2a6ef2a39ad42db994b4958bd430414880',
+  charlie: 'f223030198a53da15c5bbdc811d32ba05ca28c8c',
 };
 
 // In development: Vite proxies /api → http://localhost:8000 (no CORS issues).

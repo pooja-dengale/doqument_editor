@@ -11,7 +11,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = False
 
 # Accepts comma-separated hosts, e.g. ".onrender.com,localhost"
-ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '.onrender.com,localhost').split(',')]
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', 'ajaia-docs-api-dnt2.onrender.com,.onrender.com,localhost').split(',')]
 
 # ── Database — use DATABASE_URL if set (Postgres), otherwise SQLite ───────────
 _db_url = os.environ.get('DATABASE_URL', '').strip()
